@@ -1,0 +1,477 @@
+setwd("~/@@@ Research @@@/1) Current Projects/HSA")
+
+
+if(!require(maps) | 
+   !require(maptools) | 
+   !require(leaflet) | 
+   !require(rgdal) | 
+   !require(htmlwidgets) |
+   !require(readstata13)) {
+  install.packages(c('maps','maptools','leaflet','rgdal','htmlwidgets', 'readstata13'))
+}
+
+library(maps)
+library(maptools)
+library(leaflet)
+library(rgdal)
+library(htmlwidgets)
+library(readstata13)
+
+HSA=readShapeSpatial('HSA_Bdry.SHP')
+HRR=readShapeSpatial('HRR_Bdry.SHP')
+county=readShapeSpatial('cb_2015_us_county_5m')
+NACCHO=readShapeSpatial('NACCHO_2013_LHDBoundariesByFIPS.shp')
+hospital <- read.dta13("hospitalmap.dta")
+submet=subset(NACCHO, 
+    NACCHO_ID == "NH008" |
+    NACCHO_ID == "CT060" |
+    NACCHO_ID == "CT064" |
+    NACCHO_ID == "NJ083" |
+    NACCHO_ID == "NJ027" |
+    NACCHO_ID == "NJ084" |
+    NACCHO_ID == "NJ068" |
+    NACCHO_ID == "NJ011" |
+    NACCHO_ID == "NJ036" |
+    NACCHO_ID == "NJ018" |
+    NACCHO_ID == "NJ122" |
+    NACCHO_ID == "NY057" |
+    NACCHO_ID == "NY040" |
+    NACCHO_ID == "NY029" |
+    NACCHO_ID == "NY049" |
+    NACCHO_ID == "NY039" |
+    NACCHO_ID == "NY043" |
+    NACCHO_ID == "NY013" |
+    NACCHO_ID == "NY032" |
+    NACCHO_ID == "NY031" |
+    NACCHO_ID == "NY014" |
+    NACCHO_ID == "NY006" |
+    NACCHO_ID == "PA007" |
+    NACCHO_ID == "PA002" |
+    NACCHO_ID == "PA005" |
+    NACCHO_ID == "DE002" |
+    NACCHO_ID == "DE003" |
+    NACCHO_ID == "DC001" |
+    NACCHO_ID == "MD010" |
+    NACCHO_ID == "VA082" |
+    NACCHO_ID == "MD017" |
+    NACCHO_ID == "MD014" |
+    NACCHO_ID == "MD008" |
+    NACCHO_ID == "MD004" |
+    NACCHO_ID == "MD003" |
+    NACCHO_ID == "MD012" |
+    NACCHO_ID == "MD023" |
+    NACCHO_ID == "VA036" |
+    NACCHO_ID == "VA086" |
+    NACCHO_ID == "VA104" |
+    NACCHO_ID == "VA132" |
+    NACCHO_ID == "ZZ002" |
+    NACCHO_ID == "VA078" |
+    NACCHO_ID == "VA129" |
+    NACCHO_ID == "WV999" |
+    NACCHO_ID == "NC029" |
+    NACCHO_ID == "NC066" |
+    NACCHO_ID == "NC001" |
+    NACCHO_ID == "NC035" |
+    NACCHO_ID == "NC083" |
+    NACCHO_ID == "NC031" |
+    NACCHO_ID == "NC060" |
+    NACCHO_ID == "NC011" |
+    NACCHO_ID == "NC080" |
+    NACCHO_ID == "NC053" |
+    NACCHO_ID == "NC021" |
+    NACCHO_ID == "NC068" |
+    NACCHO_ID == "NC057" |
+    NACCHO_ID == "NC059" |
+    NACCHO_ID == "NC014" |
+    NACCHO_ID == "NC043" |
+    NACCHO_ID == "SC009" |
+    NACCHO_ID == "SC016" |
+    NACCHO_ID == "SC003" |
+    NACCHO_ID == "GA034" |
+    NACCHO_ID == "GA045" |
+    NACCHO_ID == "GA071" |
+    NACCHO_ID == "GA127" |
+    NACCHO_ID == "GA011" |
+    NACCHO_ID == "FL011" |
+    NACCHO_ID == "FL063" |
+    NACCHO_ID == "FL001" |
+    NACCHO_ID == "FL036" |
+    NACCHO_ID == "FL017" |
+    NACCHO_ID == "FL045" |
+    NACCHO_ID == "FL034" |
+    NACCHO_ID == "FL047" |
+    NACCHO_ID == "FL030" |
+    NACCHO_ID == "FL014" |
+    NACCHO_ID == "FL049" |
+    NACCHO_ID == "FL051" |
+    NACCHO_ID == "FL035" |
+    NACCHO_ID == "FL040" |
+    NACCHO_ID == "FL055" |
+    NACCHO_ID == "FL026" |
+    NACCHO_ID == "FL050" |
+    NACCHO_ID == "AL046" |
+    NACCHO_ID == "AL052" |
+    NACCHO_ID == "AL050" |
+    NACCHO_ID == "TN020" |
+    NACCHO_ID == "TN051" |
+    NACCHO_ID == "MS024" |
+    NACCHO_ID == "KY040" |
+    NACCHO_ID == "KY002" |
+    NACCHO_ID == "KY025" |
+    NACCHO_ID == "OH033" |
+    NACCHO_ID == "OH150" |
+    NACCHO_ID == "OH083" |
+    NACCHO_ID == "OH082" |
+    NACCHO_ID == "OH074" |
+    NACCHO_ID == "OH029" |
+    NACCHO_ID == "OH037" |
+    NACCHO_ID == "OH135" |
+    NACCHO_ID == "OH115" |
+    NACCHO_ID == "OH085" |
+    NACCHO_ID == "OH132" |
+    NACCHO_ID == "OH145" |
+    NACCHO_ID == "OH028" |
+    NACCHO_ID == "OH060" |
+    NACCHO_ID == "OH027" |
+    NACCHO_ID == "IN052" |
+    NACCHO_ID == "IN068" |
+    NACCHO_ID == "IN021" |
+    NACCHO_ID == "IN078" |
+    NACCHO_ID == "IN057" |
+    NACCHO_ID == "IN086" |
+    NACCHO_ID == "MI032" |
+    NACCHO_ID == "MI038" |
+    NACCHO_ID == "MI040" |
+    NACCHO_ID == "MI019" |
+    NACCHO_ID == "MI042" |
+    NACCHO_ID == "MI031" |
+    NACCHO_ID == "MI036" |
+    NACCHO_ID == "MI006" |
+    NACCHO_ID == "MI024" |
+    NACCHO_ID == "MI041" |
+    NACCHO_ID == "IA101" |
+    NACCHO_ID == "IA064" |
+    NACCHO_ID == "IA098" |
+    NACCHO_ID == "WI078" |
+    NACCHO_ID == "WI090" |
+    NACCHO_ID == "WI042" |
+    NACCHO_ID == "WI056" |
+    NACCHO_ID == "WI044" |
+    NACCHO_ID == "WI064" |
+    NACCHO_ID == "MN053" |
+    NACCHO_ID == "MN002" |
+    NACCHO_ID == "MN024" |
+    NACCHO_ID == "MN032" |
+    NACCHO_ID == "MN011" |
+    NACCHO_ID == "MN051" |
+    NACCHO_ID == "ND006" |
+    NACCHO_ID == "IL043" |
+    NACCHO_ID == "IL053" |
+    NACCHO_ID == "IL084" |
+    NACCHO_ID == "IL009" |
+    NACCHO_ID == "IL067" |
+    NACCHO_ID == "IL079" |
+    NACCHO_ID == "IL050" |
+    NACCHO_ID == "IL054" |
+    NACCHO_ID == "IL008" |
+    NACCHO_ID == "IL090" |
+    NACCHO_ID == "IL075" |
+    NACCHO_ID == "IL048" |
+    NACCHO_ID == "MO046" |
+    NACCHO_ID == "MO101" |
+    NACCHO_ID == "MO096" |
+    NACCHO_ID == "MO022" |
+    NACCHO_ID == "MO025" |
+    NACCHO_ID == "MO095" |
+    NACCHO_ID == "KS036" |
+    NACCHO_ID == "KS089" |
+    NACCHO_ID == "KS095" |
+    NACCHO_ID == "NE004" |
+    NACCHO_ID == "NE010" |
+    NACCHO_ID == "LA064" |
+    NACCHO_ID == "LA024" |
+    NACCHO_ID == "LA018" |
+    NACCHO_ID == "AR034" |
+    NACCHO_ID == "AR064" |
+    NACCHO_ID == "OK014" |
+    NACCHO_ID == "OK072" |
+    NACCHO_ID == "TX122" |
+    NACCHO_ID == "TX136" |
+    NACCHO_ID == "TX184" |
+    NACCHO_ID == "TX183" |
+    NACCHO_ID == "TX112" |
+    NACCHO_ID == "TX171" |
+    NACCHO_ID == "TX125" |
+    NACCHO_ID == "TX007" |
+    NACCHO_ID == "TX155" |
+    NACCHO_ID == "TX133" |
+    NACCHO_ID == "CO050" |
+    NACCHO_ID == "ID007" |
+    NACCHO_ID == "ID006" |
+    NACCHO_ID == "ID002" |
+    NACCHO_ID == "ID003" |
+    NACCHO_ID == "ID001" |
+    NACCHO_ID == "ID004" |
+    NACCHO_ID == "UT003" |
+    NACCHO_ID == "UT007" |
+    NACCHO_ID == "AZ008" |
+    NACCHO_ID == "AZ002" |
+    NACCHO_ID == "AZ011" |
+    NACCHO_ID == "AZ003" |
+    NACCHO_ID == "AZ014" |
+    NACCHO_ID == "NM012" |
+    NACCHO_ID == "NV002" |
+    NACCHO_ID == "CA045" |
+    NACCHO_ID == "CA040" |
+    NACCHO_ID == "CA060" |
+    NACCHO_ID == "CA058" |
+    NACCHO_ID == "CA016" |
+    NACCHO_ID == "CA043" |
+    NACCHO_ID == "CA022" |
+    NACCHO_ID == "CA041" |
+    NACCHO_ID == "CA004" |
+    NACCHO_ID == "CA052" |
+    NACCHO_ID == "CA013" |
+    NACCHO_ID == "CA010" |
+    NACCHO_ID == "CA062" |
+    NACCHO_ID == "OR003" |
+    NACCHO_ID == "OR024" |
+    NACCHO_ID == "OR022" |
+    NACCHO_ID == "WA024" |
+    NACCHO_ID == "WA031" |
+    NACCHO_ID == "WA004" |
+    NACCHO_ID == "WA027" |
+    NACCHO_ID == "WA025" )
+  
+
+
+g = leaflet() %>%
+  addProviderTiles("CartoDB.Positron", group="GoogleMaps") %>% 
+  addPolygons(data = HSA, fillColor = topo.colors(30, alpha = NULL), stroke = FALSE, group = "HSA")  %>%
+  addPolygons(data = HRR, fillColor = topo.colors(15, alpha = NULL), stroke = FALSE, group = "HRR")  %>%
+  addPolylines(data = county, weight = 4.5, opacity = .5, color= topo.colors(2, alpha = NULL), group = "county") %>%
+  addPolylines(data = submet, weight = 4.5, opacity = .5, color= topo.colors(150, alpha = NULL), group = "NLSPHS") %>%
+  addCircleMarkers(data = hospital, weight = 4.5, opacity = .5, color= topo.colors(1, alpha = NULL), group = "hospital") %>%
+  addMarkers(lng=-71.466111, lat=42.989027, popup="Manchester Health Department", group ="LHD") %>%
+  addMarkers(lng=-73.083525, lat=41.385122, popup="Naugatuck Valley Health District", group ="LHD") %>%
+  addMarkers(lng=-72.932028, lat=41.293934, popup="City Of New Haven Health Department", group ="LHD") %>%
+  addMarkers(lng=-74.173062, lat=40.869405, popup="Passaic County Department Of Health", group ="LHD") %>%
+  addMarkers(lng=-74.226408, lat=40.67383, popup="City of Elizabeth, Department Of Health And Human Services", group ="LHD") %>%
+  addMarkers(lng=-74.171643, lat=40.916327, popup="Paterson Division Of Health", group ="LHD") %>%
+  addMarkers(lng=-74.053712, lat=40.249708, popup="", group ="LHD") %>%
+  addMarkers(lng=-74.790088, lat=40.007737, popup="Burlington County Health Department", group ="LHD") %>%
+  addMarkers(lng=-75.121872, lat=39.757432, popup="Gloucester County Health Department", group ="LHD") %>%
+  addMarkers(lng=-75.023374, lat=39.377041, popup="Cumberland County Health Department", group ="LHD") %>%
+  addMarkers(lng=-74.685411, lat=40.589554, popup="Somerset County Health Department", group ="LHD") %>%
+  addMarkers(lng=-73.784858, lat=40.91757, popup="Westchester County Department Of Health", group ="LHD") %>%
+  addMarkers(lng=-74.102175, lat=41.180177, popup="Rockland County Health Department", group ="LHD") %>%
+  addMarkers(lng=-73.93975, lat=40.747155, popup="New York City Department Of Health", group ="LHD") %>%
+  addMarkers(lng=-73.11278, lat=40.940235, popup="Suffolk County Department Of Health Services", group ="LHD") %>%
+  addMarkers(lng=-73.599536, lat=42.748588, popup="Rensselaer County Health Department", group ="LHD") %>%
+  addMarkers(lng=-73.91967, lat=42.82098, popup="Schenectady County Public Health Services", group ="LHD") %>%
+  addMarkers(lng=-73.911519, lat=41.701921, popup="Dutchess County Health Department", group ="LHD") %>%
+  addMarkers(lng=-75.948439, lat=42.96303, popup="Onondaga County Health Department", group ="LHD") %>%
+  addMarkers(lng=-75.154707, lat=43.141264, popup="Oneida County Health Department", group ="LHD") %>%
+  addMarkers(lng=-78.877477, lat=42.881489, popup="Erie County Department Of Health", group ="LHD") %>%
+  addMarkers(lng=-79.504709, lat=42.237679, popup="Chautauqua County Department Of Health", group ="LHD") %>%
+  addMarkers(lng=-80.083681, lat=42.13907, popup="Erie County Department Of Health", group ="LHD") %>%
+  addMarkers(lng=-75.476275, lat=40.608473, popup="Allentown Health Bureau", group ="LHD") %>%
+  addMarkers(lng=-75.603156, lat=39.987186, popup="Chester County Health Department", group ="LHD") %>%
+  addMarkers(lng=-75.729724, lat=39.6182, popup="Northeast State Service Center", group ="LHD") %>%
+  addMarkers(lng=-75.362567, lat=38.943253, popup="Thurman Adams State Service Center", group ="LHD") %>%
+  addMarkers(lng=-76.983607, lat=38.905026, popup="District of Columbia Department Of Health", group ="LHD") %>%
+  addMarkers(lng=-76.970784, lat=38.591492, popup="Charles County Health Department", group ="LHD") %>%
+  addMarkers(lng=-77.151816, lat=38.997272, popup="Prince William Health District", group ="LHD") %>%
+  addMarkers(lng=-77.182294, lat=39.091338, popup="Montgomery County Department Of Health & Human Services", group ="LHD") %>%
+  addMarkers(lng=-76.352184, lat=39.536084, popup="Harford County Health Department", group ="LHD") %>%
+  addMarkers(lng=-76.983558, lat=39.548569, popup="Carroll County Health Department", group ="LHD") %>%
+  addMarkers(lng=-76.614898, lat=39.368561, popup="Baltimore City Health Department", group ="LHD") %>%
+  addMarkers(lng=-76.5528, lat=38.98775, popup="Anne Arundel County Department Of Health", group ="LHD") %>%
+  addMarkers(lng=-77.442989, lat=39.479136, popup="Frederick County Health Department", group ="LHD") %>%
+  addMarkers(lng=-77.65272, lat=39.678219, popup="Washington County Health Department", group ="LHD") %>%
+  addMarkers(lng=-77.340466, lat=38.837138, popup="Fairfax County Health Department", group ="LHD") %>%
+  addMarkers(lng=-77.435528, lat=37.539769, popup="City Of Richmond Health District", group ="LHD") %>%
+  addMarkers(lng=-76.150514, lat=36.837313, popup="Virginia Beach Department Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-76.480498, lat=37.038265, popup="Peninsula Health District-Virginia Department Of Health", group ="LHD") %>%
+  addMarkers(lng=-76.386177, lat=37.009301, popup="", group ="LHD") %>%
+  addMarkers(lng=-76.310161, lat=36.824187, popup="Portsmouth Health Department", group ="LHD") %>%
+  addMarkers(lng=-77.49721, lat=37.209357, popup="Crater Health District", group ="LHD") %>%
+  addMarkers(lng=-81.266198, lat=37.822892, popup="Bekley Raleigh Health Department", group ="LHD") %>%
+  addMarkers(lng=-80.20043, lat=36.11085, popup="Forsyth County Department Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-79.850866, lat=35.638259, popup="Randolph County Health Department", group ="LHD") %>%
+  addMarkers(lng=-79.380185, lat=36.190945, popup="Alamance County Health Department", group ="LHD") %>%
+  addMarkers(lng=-79.73703, lat=36.114921, popup="Guilford County Department Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-77.896666, lat=35.373478, popup="Wayne County Health Department", group ="LHD") %>%
+  addMarkers(lng=-81.233227, lat=35.214656, popup="Gaston County Health Department", group ="LHD") %>%
+  addMarkers(lng=-81.125003, lat=35.216936, popup="Orange County Health Department", group ="LHD") %>%
+  addMarkers(lng=-80.670173, lat=35.502816, popup="Cabarrus Public Health Authority", group ="LHD") %>%
+  addMarkers(lng=-80.509089, lat=35.066044, popup="Union County Health Department", group ="LHD") %>%
+  addMarkers(lng=-80.797285, lat=35.166342, popup="Mecklenburg County Health Department", group ="LHD") %>%
+  addMarkers(lng=-78.884257, lat=35.0748, popup="E Newton Smith Public Health Center/ Cumberland County Health Department", group ="LHD") %>%
+  addMarkers(lng=-79.07494, lat=34.670328, popup="Robeson County Health Department", group ="LHD") %>%
+  addMarkers(lng=-77.962018, lat=34.272145, popup="New Hanover County Health Department", group ="LHD") %>%
+  addMarkers(lng=-77.503794, lat=34.754982, popup="Onslow County Health Department", group ="LHD") %>%
+  addMarkers(lng=-81.389208, lat=35.669886, popup="Catawba County Department Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-80.88964, lat=35.869567, popup="Iredell County Health Department", group ="LHD") %>%
+  addMarkers(lng=-81.002526, lat=34.029148, popup="Region 3 Public Health Office", group ="LHD") %>%
+  addMarkers(lng=-78.947093, lat=33.847406, popup="Region 6 Health District", group ="LHD") %>%
+  addMarkers(lng=-82.402264, lat=34.847112, popup="Public Health Region 2", group ="LHD") %>%
+  addMarkers(lng=-84.589572, lat=33.897634, popup="Cobb & Douglas Counties Boards Of Health", group ="LHD") %>%
+  addMarkers(lng=-84.29027, lat=33.771947, popup="Dekalb County Board Of Health", group ="LHD") %>%
+  addMarkers(lng=-83.995766, lat=33.948632, popup="District 3-4 Public Health Office", group ="LHD") %>%
+  addMarkers(lng=-82.083045, lat=33.470481, popup="Richmond County Health Department", group ="LHD") %>%
+  addMarkers(lng=-83.61786, lat=32.806321, popup="Macon-Bibb County Health Department", group ="LHD") %>%
+  addMarkers(lng=-81.732588, lat=29.937041, popup="Clay County Health Department", group ="LHD") %>%
+  addMarkers(lng=-81.063969, lat=29.235588, popup="Volusia County Health Department", group ="LHD") %>%
+  addMarkers(lng=-81.582792, lat=30.332207, popup="Duval County Health Department", group ="LHD") %>%
+  addMarkers(lng=-84.353057, lat=30.452484, popup="Leon County Health Department", group ="LHD") %>%
+  addMarkers(lng=-87.222515, lat=30.428781, popup="Escambia County Health Department", group ="LHD") %>%
+  addMarkers(lng=-86.650482, lat=30.403001, popup="Okaloosa County Health Department", group ="LHD") %>%
+  addMarkers(lng=-81.730074, lat=28.773373, popup="Lake County Health Department", group ="LHD") %>%
+  addMarkers(lng=-81.385959, lat=28.462146, popup="Orange County Health Department", group ="LHD") %>%
+  addMarkers(lng=-80.402619, lat=27.641533, popup="Indian River County Health Department", group ="LHD") %>%
+  addMarkers(lng=-80.343496, lat=25.606126, popup="Florida Department Of Health-Dade County Health Department", group ="LHD") %>%
+  addMarkers(lng=-80.070249, lat=26.715844, popup="Palm Beach County Health Department", group ="LHD") %>%
+  addMarkers(lng=-82.632806, lat=27.770793, popup="Pinellas County Health Department", group ="LHD") %>%
+  addMarkers(lng=-81.838448, lat=26.637103, popup="Lee County Health Department", group ="LHD") %>%
+  addMarkers(lng=-82.515923, lat=27.487487, popup="Manatee County Health Department", group ="LHD") %>%
+  addMarkers(lng=-82.512645, lat=27.338992, popup="Sarasota County Health Department", group ="LHD") %>%
+  addMarkers(lng=-82.595728, lat=28.468477, popup="Hernando County Health Department", group ="LHD") %>%
+  addMarkers(lng=-82.619283, lat=28.20331, popup="Pasco County Health Department", group ="LHD") %>%
+  addMarkers(lng=-86.601445, lat=34.803193, popup="Madison County Health Department", group ="LHD") %>%
+  addMarkers(lng=-86.401107, lat=32.3391, popup="Montgomery County Health Department", group ="LHD") %>%
+  addMarkers(lng=-88.026681, lat=30.673984, popup="Mobile County Health Department", group ="LHD") %>%
+  addMarkers(lng=-86.790618, lat=36.149614, popup="Nashville Davidson County Health Department", group ="LHD") %>%
+  addMarkers(lng=-83.913706, lat=36.001185, popup="Knox County Health Department", group ="LHD") %>%
+  addMarkers(lng=-88.880304, lat=30.409826, popup="Harrison County Health Department/Biloxi & Gulfport", group ="LHD") %>%
+  addMarkers(lng=-84.562134, lat=39.029195, popup="Northern Kentucky Independent District", group ="LHD") %>%
+  addMarkers(lng=-86.418234, lat=37.003731, popup="Barren River District Health Department", group ="LHD") %>%
+  addMarkers(lng=-84.450902, lat=37.056193, popup="Lake Cumberland District Health Department", group ="LHD") %>%
+  addMarkers(lng=-83.01296, lat=39.966856, popup="Columbus Health Department", group ="LHD") %>%
+  addMarkers(lng=-83.656651, lat=41.418411, popup="Wood County Health Department", group ="LHD") %>%
+  addMarkers(lng=-83.540954, lat=41.651526, popup="Lucas County Health Department", group ="LHD") %>%
+  addMarkers(lng=-82.13786, lat=41.363571, popup="Lorain County Health Department", group ="LHD") %>%
+  addMarkers(lng=-81.20974, lat=41.697563, popup="Lake County General Health District", group ="LHD") %>%
+  addMarkers(lng=-81.678083, lat=41.520126, popup="City Of Cleveland Department Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-81.787317, lat=41.376642, popup="Cuyahoga County District Board Of Health", group ="LHD") %>%
+  addMarkers(lng=-81.436523, lat=41.176261, popup="Summit County General Health District", group ="LHD") %>%
+  addMarkers(lng=-81.208228, lat=41.16625, popup="Portage County Combined General Health District", group ="LHD") %>%
+  addMarkers(lng=-80.761275, lat=41.102896, popup="Mahoning County Board Of Health", group ="LHD") %>%
+  addMarkers(lng=-81.451327, lat=40.847623, popup="Stark County Health Department", group ="LHD") %>%
+  addMarkers(lng=-84.214131, lat=39.444049, popup="Warren County Combined Health District", group ="LHD") %>%
+  addMarkers(lng=-84.13448, lat=39.097086, popup="Clermont County General Health District", group ="LHD") %>%
+  addMarkers(lng=-84.513064, lat=39.127376, popup="Hamilton County General Health District", group ="LHD") %>%
+  addMarkers(lng=-83.771782, lat=39.959574, popup="Clark County Combined Health District", group ="LHD") %>%
+  addMarkers(lng=-85.681513, lat=40.097817, popup="Madison County Health Department", group ="LHD") %>%
+  addMarkers(lng=-87.007505, lat=41.463199, popup="Porter County Health Department", group ="LHD") %>%
+  addMarkers(lng=-85.876662, lat=41.55878, popup="Elkhart County Health Department", group ="LHD") %>%
+  addMarkers(lng=-86.252661, lat=41.670274, popup="St Joseph County Health Department", group ="LHD") %>%
+  addMarkers(lng=-86.591196, lat=39.219531, popup="Monroe County Health Department", group ="LHD") %>%
+  addMarkers(lng=-87.559175, lat=37.954531, popup="Vanderburgh County Health Department", group ="LHD") %>%
+  addMarkers(lng=-82.881506, lat=42.598055, popup="Macomb County Health Department", group ="LHD") %>%
+  addMarkers(lng=-83.472457, lat=41.907196, popup="Monroe County Health Department", group ="LHD") %>%
+  addMarkers(lng=-83.297371, lat=42.626921, popup="Oakland County Health Division", group ="LHD") %>%
+  addMarkers(lng=-83.688376, lat=43.013727, popup="Genesee County Health Department", group ="LHD") %>%
+  addMarkers(lng=-83.974472, lat=43.420026, popup="Saginaw County Department Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-83.923398, lat=42.575522, popup="Livingston County Health Department", group ="LHD") %>%
+  addMarkers(lng=-85.106068, lat=43.314815, popup="Mid-Michigan District Health Department", group ="LHD") %>%
+  addMarkers(lng=-85.031277, lat=41.90548, popup="Branch-Hillsdale-St Joseph District Health Department", group ="LHD") %>%
+  addMarkers(lng=-84.41085, lat=42.267179, popup="Jackson County Health Department", group ="LHD") %>%
+  addMarkers(lng=-86.134355, lat=42.843818, popup="Ottawa County Health Department", group ="LHD") %>%
+  addMarkers(lng=-96.352258, lat=42.51194, popup="Siouxland District Health Department", group ="LHD") %>%
+  addMarkers(lng=-91.500622, lat=41.635728, popup="Johnson County Department Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-90.574849, lat=41.521038, popup="Scott County Health Department", group ="LHD") %>%
+  addMarkers(lng=-87.733076, lat=43.710329, popup="Sheboygan County Division Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-88.158004, lat=43.38963, popup="Washington County Health And Human Services", group ="LHD") %>%
+  addMarkers(lng=-87.82993, lat=42.561312, popup="Kenosha County Division Of Health", group ="LHD") %>%
+  addMarkers(lng=-87.89252, lat=43.049579, popup="Milwaukee Health Department", group ="LHD") %>%
+  addMarkers(lng=-91.140529, lat=43.806197, popup="Lacrosse County Health Department", group ="LHD") %>%
+  addMarkers(lng=-88.381003, lat=44.281533, popup="Outagamie County Public Health", group ="LHD") %>%
+  addMarkers(lng=-92.839768, lat=45.073127, popup="Washington County Department Of Health", group ="LHD") %>%
+  addMarkers(lng=-93.431102, lat=45.288298, popup="Anoka County Community Health & Environmental Services Department", group ="LHD") %>%
+  addMarkers(lng=-93.257647, lat=44.9748, popup="Hennepin County Community Health Department", group ="LHD") %>%
+  addMarkers(lng=-93.257647, lat=44.9748, popup="Minneapolis Department Health & Family Support", group ="LHD") %>%
+  addMarkers(lng=-92.049345, lat=46.740951, popup="St Louis County Department Of Public Health And Long Term Medical Care", group ="LHD") %>%
+  addMarkers(lng=-94.215271, lat=45.574017, popup="Stearns County Public Health", group ="LHD") %>%
+  addMarkers(lng=-96.834703, lat=46.927094, popup="Fargo Cass Public Health", group ="LHD") %>%
+  addMarkers(lng=-87.867656, lat=42.352097, popup="Lake County Health Department", group ="LHD") %>%
+  addMarkers(lng=-88.456087, lat=42.326265, popup="Mchenry County Department Of Health", group ="LHD") %>%
+  addMarkers(lng=-88.043681, lat=41.499502, popup="Will County Health Department", group ="LHD") %>%
+  addMarkers(lng=-87.654272, lat=41.956949, popup="City Of Chicago Department Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-90.575628, lat=41.477559, popup="Rock Island County Health Department", group ="LHD") %>%
+  addMarkers(lng=-89.481508, lat=40.51056, popup="Tazewell County Health Department", group ="LHD") %>%
+  addMarkers(lng=-89.653644, lat=40.705715, popup="Peoria City/County Health Department", group ="LHD") %>%
+  addMarkers(lng=-88.992994, lat=40.476769, popup="Mclean County Health Department", group ="LHD") %>%
+  addMarkers(lng=-88.244266, lat=40.10789, popup="Champaign-Urbana Public Health District", group ="LHD") %>%
+  addMarkers(lng=-90.069002, lat=38.861343, popup="Madison County Health Department", group ="LHD") %>%
+  addMarkers(lng=-89.998032, lat=38.478277, popup="St Clair County Health Department", group ="LHD") %>%
+  addMarkers(lng=-88.926317, lat=39.81707, popup="Macon County Health Department", group ="LHD") %>%
+  addMarkers(lng=-90.57979, lat=38.258066, popup="Jefferson County Health Department", group ="LHD") %>%
+  addMarkers(lng=-90.216863, lat=38.629712, popup="City Of Saint Louis Department Of Health And Hospitals", group ="LHD") %>%
+  addMarkers(lng=-90.463316, lat=38.858035, popup="St Charles County Department Of Community Health And The Environment", group ="LHD") %>%
+  addMarkers(lng=-94.389653, lat=39.258315, popup="Clay County Health Center", group ="LHD") %>%
+  addMarkers(lng=-92.398565, lat=38.884324, popup="Columbia/Boone County Health Department", group ="LHD") %>%
+  addMarkers(lng=-93.354612, lat=37.20745, popup="Springfield/Greene County Health Department.", group ="LHD") %>%
+  addMarkers(lng=-94.879975, lat=38.893764, popup="Johnson County Public Health Department", group ="LHD") %>%
+  addMarkers(lng=-95.71987, lat=39.061436, popup="Shawnee County Health Agency", group ="LHD") %>%
+  addMarkers(lng=-97.31775, lat=37.707178, popup="Wichita-Sedgwick County Department Of Community Health", group ="LHD") %>%
+  addMarkers(lng=-95.96366, lat=41.240737, popup="Douglas County Health Department", group ="LHD") %>%
+  addMarkers(lng=-96.635703, lat=40.806237, popup="Lincoln Lancaster County Health Department", group ="LHD") %>%
+  addMarkers(lng=-90.750267, lat=29.808328, popup="Louisiana Region 3 Office Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-93.215443, lat=30.226792, popup="Office Of Public Health Southwest Region 5", group ="LHD") %>%
+  addMarkers(lng=-92.547344, lat=31.281321, popup="Office Of Public Health-Region 6 Central Region (8 Parishes)", group ="LHD") %>%
+  addMarkers(lng=-92.088127, lat=34.121075, popup="Jefferson County Health Unit", group ="LHD") %>%
+  addMarkers(lng=-94.361247, lat=35.350978, popup="Sebastian County Health Unit", group ="LHD") %>%
+  addMarkers(lng=-97.411896, lat=35.238349, popup="Cleveland County Health Department", group ="LHD") %>%
+  addMarkers(lng=-95.798024, lat=36.109821, popup="Tulsa City-County Health Department", group ="LHD") %>%
+  addMarkers(lng=-96.585712, lat=33.179984, popup="Collin County Health Care Services", group ="LHD") %>%
+  addMarkers(lng=-97.317801, lat=32.728688, popup="City Of Fort Worth Public Health Department", group ="LHD") %>%
+  addMarkers(lng=-98.479935, lat=33.905559, popup="Wichita Falls-Wichita County Public Health District", group ="LHD") %>%
+  addMarkers(lng=-97.159082, lat=31.553876, popup="Waco-Mclennan County Public Health District", group ="LHD") %>%
+  addMarkers(lng=-96.386067, lat=30.681053, popup="Brazos County Health District", group ="LHD") %>%
+  addMarkers(lng=-98.48642, lat=29.423945, popup="San Antonio Metropolitan Health District", group ="LHD") %>%
+  addMarkers(lng=-97.596306, lat=27.838247, popup="Corpus Christi-Nueces County Public Health District", group ="LHD") %>%
+  addMarkers(lng=-97.714483, lat=30.263378, popup="Austin/Travis County Health & Human Services Department", group ="LHD") %>%
+  addMarkers(lng=-101.857733, lat=33.570034, popup="City Of Lubbock Health Department", group ="LHD") %>%
+  addMarkers(lng=-102.350647, lat=31.855051, popup="Ector County Health Department", group ="LHD") %>%
+  addMarkers(lng=-104.631463, lat=38.279592, popup="Pueblo City-County Health Department", group ="LHD") %>%
+  addMarkers(lng=-112.380093, lat=42.904916, popup="Southeastern District Health Department", group ="LHD") %>%
+  addMarkers(lng=-114.524876, lat=42.400555, popup="South Central District Health Department", group ="LHD") %>%
+  addMarkers(lng=-112.174467, lat=43.534886, popup="Eastern Idaho Public Health District", group ="LHD") %>%
+  addMarkers(lng=-116.913734, lat=46.208729, popup="North Central District Health Department", group ="LHD") %>%
+  addMarkers(lng=-116.287653, lat=43.627161, popup="Central District Health Department", group ="LHD") %>%
+  addMarkers(lng=-116.660251, lat=47.79695, popup="Panhandle Health District", group ="LHD") %>%
+  addMarkers(lng=-111.69725, lat=40.226569, popup="Utah County Health Department", group ="LHD") %>%
+  addMarkers(lng=-113.609694, lat=37.185988, popup="Southwest Utah Public Health Department", group ="LHD") %>%
+  addMarkers(lng=-112.070981, lat=33.507577, popup="Maricopa County Department Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-109.919056, lat=31.432669, popup="Cochise County Health Department", group ="LHD") %>%
+  addMarkers(lng=-110.950864, lat=32.167395, popup="Pima County Health Department", group ="LHD") %>%
+  addMarkers(lng=-111.373463, lat=35.380939, popup="Coconino County Health Department", group ="LHD") %>%
+  addMarkers(lng=-112.911764, lat=34.864326, popup="Yavapai County Community Health Services", group ="LHD") %>%
+  addMarkers(lng=-105.877135, lat=35.616964, popup="New Mexico Public Health Division District 2", group ="LHD") %>%
+  addMarkers(lng=-119.801071, lat=39.550957, popup="Washoe County District Health Department", group ="LHD") %>%
+  addMarkers(lng=-118.238642, lat=34.065975, popup="Los Angeles County Department Of Health Services", group ="LHD") %>%
+  addMarkers(lng=-117.200391, lat=32.765244, popup="County Of San Diego Department Of Health Services", group ="LHD") %>%
+  addMarkers(lng=-119.186492, lat=34.238786, popup="Ventura County Public Health", group ="LHD") %>%
+  addMarkers(lng=-119.372586, lat=36.301334, popup="Tulare County Health & Human Services Agency", group ="LHD") %>%
+  addMarkers(lng=-118.779649, lat=35.468183, popup="Kern County Department Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-120.615973, lat=35.23575, popup="San Luis Obispo County Health Department", group ="LHD") %>%
+  addMarkers(lng=-120.033693, lat=37.043434, popup="Madera County Public Health Department", group ="LHD") %>%
+  addMarkers(lng=-122.419318, lat=37.779588, popup="San Francisco Department Of Public Health", group ="LHD") %>%
+  addMarkers(lng=-122.257996, lat=37.866536, popup="Berkeley Public Health Department", group ="LHD") %>%
+  addMarkers(lng=-122.690443, lat=38.525733, popup="Sonoma County Department Of Health Services", group ="LHD") %>%
+  addMarkers(lng=-124.151583, lat=40.798659, popup="Humboldt County Department Of Health And Human Services", group ="LHD") %>%
+  addMarkers(lng=-120.789952, lat=38.734925, popup="El Dorado County Public Health Department", group ="LHD") %>%
+  addMarkers(lng=-121.857077, lat=38.687045, popup="Yolo County Health Department", group ="LHD") %>%
+  addMarkers(lng=-122.536467, lat=45.320277, popup="Clackamas County Public Health Division", group ="LHD") %>%
+  addMarkers(lng=-122.673946, lat=45.518371, popup="Multnomah County Health Department", group ="LHD") %>%
+  addMarkers(lng=-123.003655, lat=44.94878, popup="Marion County Health Department", group ="LHD") %>%
+  addMarkers(lng=-122.210044, lat=48.006311, popup="Snohomish Health District", group ="LHD") %>%
+  addMarkers(lng=-122.501286, lat=48.75094, popup="Whatcom County Health Department", group ="LHD") %>%
+  addMarkers(lng=-122.631558, lat=47.568714, popup="Bremerton-Kitsap County Health District", group ="LHD") %>%
+  addMarkers(lng=-122.446523, lat=47.223229, popup="Tacoma-Pierce County Health Department", group ="LHD") %>%
+  addMarkers(lng=-122.720499, lat=45.678996, popup="SW Washington Health District/ Clark County Public Health", group ="LHD") %>%
+  addLayersControl(baseGroups = c("GoogleMaps"), overlayGroups = c("HSA", "HRR", "NLSPHS", "county", "hospital", "LHD"), options = layersControlOptions(collapsed = FALSE)) %>%
+  setView(lng=-92.2896, lat=34.7465, zoom = 9) 
+ 
+  saveWidget(g, file="g.html")
